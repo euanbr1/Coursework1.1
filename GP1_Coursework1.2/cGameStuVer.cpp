@@ -4,6 +4,8 @@ cGame.cpp
 ==================================================================================
 */
 #include "cGame.h"
+#include <chrono>
+#include <thread>
 
 cGame* cGame::pInstance = NULL;
 static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
@@ -52,7 +54,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theAreaClicked = { 0, 0 };
 	// Store the textures
 	textureName = { "sea", "bottle", "ship","enemy","theBackground", "OpeningScreen", "ClosingScreen", "HScoreScreen"};
-	texturesToUse = { "Images/Sprites/sea64x64.png", "Images/Sprites/Bottle64x64.png", "Images/Sprites/shipGreen64x64.png", "Images/Sprites/shipPirate64x64.png","Images/Bkg/Bkgnd.png", "Images/Bkg/OpeningScreenF.png", "Images/Bkg/ClosingScreenF.png","Images/Bkg/BkgndHS.png" };
+	texturesToUse = { "Images/Sprites/sea64x64.png", "Images/Sprites/PurpleOrb.png", "Images/Sprites/shipGreen64x64.png", "Images/Sprites/Enemy1.png","Images/Bkg/Bkgnd.png", "Images/Bkg/OpeningScreenF.png", "Images/Bkg/ClosingScreenF.png","Images/Bkg/BkgndHS.png" };
 	for (unsigned int tCount = 0; tCount < textureName.size(); tCount++)
 	{	
 		theTextureMgr->addTexture(textureName[tCount], texturesToUse[tCount]);
@@ -143,6 +145,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theTextureMgr->addTexture(highScoreTextures[item], theFontMgr->getFont("skeleton")->createTextTexture(theRenderer, entry.c_str(), textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
  	}
 
+	timer = 0;
 	gameOver = false;
 
 }
@@ -280,6 +283,7 @@ void cGame::update()
 
 void cGame::update(double deltaTime)
 {
+	timer += deltaTime;
 	// CHeck Button clicked and change state
 	if (theGameState == gameState::menu || theGameState == gameState::end)
 	{
@@ -303,17 +307,24 @@ void cGame::update(double deltaTime)
 		gameOver = false;
 		if (theGameState == gameState::playing && gameOver == false)
 		{
+
 			theTileMap.update(theShip.getMapPosition(), 1, 0.0f);
 			theTileMap.update(theBottle.getMapPosition(), 1, 0.0f);
 			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
-			theShip.setMapPosition(spriteRandom(gen), spriteRandom(gen));
-			theBottle.genRandomPos(theShip.getMapPosition().R, theShip.getMapPosition().C);
+			theShip.setMapPosition(5, 8);
+			theBottle.setMapPosition(5, 0);
+			thePirate.setMapPosition(6, 0);
+			
 			// Lab Code goes here
 			theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
 			theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
+			theTileMap.update(thePirate.getMapPosition(), 4, thePirate.getEnemyRotation());
+
 			// Lab Code goes here
 			bottlesCollected = 0;
+
 		}
+		
 	}
 
 	theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
@@ -321,7 +332,11 @@ void cGame::update(double deltaTime)
 
 	if (theGameState == gameState::playing)
 	{
-
+		//if ((int)timer % 4 == 0)
+		//{
+		//	thePirate.genRandomPos(theShip.getMapPosition(), theBottle.getMapPosition());
+		//	theTileMap.update(thePirate.getMapPosition(), 4, thePirate.getEnemyRotation());
+		//}
 		// Check if ship has collided with the bottle
 		if (theShip.getMapPosition() == theBottle.getMapPosition())
 		{
@@ -333,7 +348,18 @@ void cGame::update(double deltaTime)
 			strScore += to_string(bottlesCollected).c_str();
 			theTextureMgr->deleteTexture("BottleCount");
 		}
-
+		if (theGameState == gameState::playing && thePirate.getMapPosition().R < 9)
+		{
+			thePirate.setEnemyRotation(0.0f);
+			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
+			if ((int)timer % 4 == 0)
+			{
+				thePirate.update(thePirate.getMapPosition().C + 1, thePirate.getMapPosition().R);
+			}
+			
+			theTileMap.update(thePirate.getMapPosition(), 4, thePirate.getEnemyRotation());
+			//Sleep(900);
+		}
 		// Check if Pirate has collided with the ship
 		// Lab Code goes here
 
@@ -342,7 +368,6 @@ void cGame::update(double deltaTime)
 			theGameState = gameState::end;
 		}
 	}
-
 }
 
 bool cGame::getInput(bool theLoop)
@@ -412,7 +437,7 @@ bool cGame::getInput(bool theLoop)
 				case SDLK_ESCAPE:
 					theLoop = false;
 					break;
-				case SDLK_DOWN:
+				case SDLK_s:
 				{
 					if (theGameState == gameState::playing && theShip.getMapPosition().R < 9)
 					{
@@ -425,7 +450,7 @@ bool cGame::getInput(bool theLoop)
 				}
 				break;
 
-				case SDLK_UP:
+				case SDLK_w:
 				{
 					if (theGameState == gameState::playing && theShip.getMapPosition().R > 0)
 					{
@@ -437,34 +462,45 @@ bool cGame::getInput(bool theLoop)
 					}
 				}
 				break;
-				case SDLK_RIGHT:
-				{
-					if (theGameState == gameState::playing && theShip.getMapPosition().C < 9)
-					{
-						theShip.setShipRotation(270.0f);
-						theTileMap.update(theShip.getMapPosition(), 1, 0.0f);
-						theShip.update(theShip.getMapPosition().C + 1, theShip.getMapPosition().R);
-						theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
-						// Lab Code goes here
-					}
-				}
-				break;
+				//case SDLK_RIGHT:
+				//{
+				//	if (theGameState == gameState::playing && theShip.getMapPosition().C < 9)
+				//	{
+				//		theShip.setShipRotation(270.0f);
+				//		theTileMap.update(theShip.getMapPosition(), 1, 0.0f);
+				//		theShip.update(theShip.getMapPosition().C + 1, theShip.getMapPosition().R);
+				//		theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
+				//		// Lab Code goes here
+				//	}
+				//}
+				//break;
 
-				case SDLK_LEFT:
-				{
-					if (theGameState == gameState::playing && theShip.getMapPosition().C > 0)
-					{
-						theShip.setShipRotation(90.0f);
-						theTileMap.update(theShip.getMapPosition(), 1, 0.0f);
-						theShip.update(theShip.getMapPosition().C - 1, theShip.getMapPosition().R);
-						theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
-						// Lab Code goes here
-					}
-				}
+				//case SDLK_LEFT:
+				//{
+				//	if (theGameState == gameState::playing && theShip.getMapPosition().C > 0)
+				//	{
+				//		theShip.setShipRotation(90.0f);
+				//		theTileMap.update(theShip.getMapPosition(), 1, 0.0f);
+				//		theShip.update(theShip.getMapPosition().C - 1, theShip.getMapPosition().R);
+				//		theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
+				//		// Lab Code goes here
+				//	}
+				//}
 				break;
 				case SDLK_SPACE:
 				{
-				}
+					/*theBullets.push_back(new cBullet);
+					int numBullets = theBullets.size() - 1;
+					theBullets[numBullets]->setSpritePos({ theShip.getBoundingRect().x + theShip.getSpriteCentre().x, theShip.getBoundingRect().y + theShip.getSpriteCentre().y });
+					theBullets[numBullets]->setSpriteTranslation({ 50, 50 });
+					theBullets[numBullets]->setTexture(theTextureMgr->getTexture("photon"));
+					theBullets[numBullets]->setSpriteDimensions(theTextureMgr->getTexture("photon")->getTWidth(), theTextureMgr->getTexture("photon")->getTHeight());
+					theBullets[numBullets]->setBulletVelocity(50);
+					theBullets[numBullets]->setSpriteRotAngle(theShip.getSpriteRotAngle());
+					theBullets[numBullets]->setActive(true);
+					cout << "Bullet added to Vector at position - x: " << theShip.getBoundingRect().x << " y: " << theShip.getBoundingRect().y << endl;
+				*/}
+
 				break;
 				default:
 					break;
@@ -476,6 +512,7 @@ bool cGame::getInput(bool theLoop)
 
 	}
 	return theLoop;
+
 }
 
 double cGame::getElapsedSeconds()

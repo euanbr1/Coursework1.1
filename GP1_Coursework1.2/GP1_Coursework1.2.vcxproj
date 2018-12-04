@@ -93,7 +93,7 @@ xcopy /Y "$(ProjectDir)Data\*.*" "$(OutDir)Data\"
 xcopy /Y "SDL2\SDL2-2.0.4\lib\x86\SDL2.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_image-2.0.1\lib\x86\*.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_ttf-2.0.14\lib\x86\*.dll" "$(OutDir)"
-xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)</Command>
+xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -131,7 +131,7 @@ xcopy /Y "$(ProjectDir)Data\*.*" "$(OutDir)Data\"
 xcopy /Y "SDL2\SDL2-2.0.4\lib\x86\SDL2.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_image-2.0.1\lib\x86\*.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_ttf-2.0.14\lib\x86\*.dll" "$(OutDir)"
-xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)</Command>
+xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -150,6 +150,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cBottle.cpp" />
+    <ClCompile Include="cBullet.cpp" />
     <ClCompile Include="cButton.cpp" />
     <ClCompile Include="cButtonMgr.cpp" />
     <ClCompile Include="cEnemy.cpp" />
@@ -162,7 +163,6 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)</Command>
     <ClCompile Include="cSound.cpp" />
     <ClCompile Include="cSoundMgr.cpp" />
     <ClCompile Include="cSprite.cpp" />
-    <ClCompile Include="cSpriteM.cpp" />
     <ClCompile Include="cTexture.cpp" />
     <ClCompile Include="cTextureMgr.cpp" />
     <ClCompile Include="cTileMap.cpp" />
@@ -170,6 +170,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cBottle.h" />
+    <ClInclude Include="cBullet.h" />
     <ClInclude Include="cButton.h" />
     <ClInclude Include="cButtonMgr.h" />
     <ClInclude Include="cEnemy.h" />
@@ -182,7 +183,6 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)</Command>
     <ClInclude Include="cSound.h" />
     <ClInclude Include="cSoundMgr.h" />
     <ClInclude Include="cSprite.h" />
-    <ClInclude Include="cSpriteM.h" />
     <ClInclude Include="cTexture.h" />
     <ClInclude Include="cTextureMgr.h" />
     <ClInclude Include="cTileMap.h" />

@@ -93,6 +93,7 @@ private:
 	bool gameOver;
 	string theHighScoreTable;
 	int theHSTableSize;
+	double timer;
 };
 
 #endif

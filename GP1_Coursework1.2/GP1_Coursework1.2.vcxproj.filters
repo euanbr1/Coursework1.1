@@ -54,9 +54,6 @@
     <ClCompile Include="cSprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cSpriteM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,6 +64,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PirateTreasureSDL2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cBullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,9 +110,6 @@
     <ClInclude Include="cSprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cSpriteM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="cTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -126,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PirateTreasure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cBullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

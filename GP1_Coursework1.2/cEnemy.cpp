@@ -54,7 +54,7 @@ void cEnemy::genRandomPos(MapRC ship, MapRC bottle)
 	this->setMapPosition(spriteRandom(gen), spriteRandom(gen));
 	while (this->getMapPosition() == ship && this->getMapPosition() == bottle)
 	{
-		this->setMapPosition(this->spriteRandom(gen), this->spriteRandom(gen));
+		this->setMapPosition(this->spriteRandom(gen), 0);   ///this->spriteRandom(gen)
 	}
 }
 
