@@ -54,7 +54,7 @@ private:
 	vector<LPCSTR> textureName;
 	vector<LPCSTR> textName;
 	vector<LPCSTR> texturesToUse;
-	vector<cEnemy*> thePirate;
+	vector<cEnemy*> thePirates;
 	vector<cBullet*> theBullets;
 	vector<cSprite*> theExplosions;
 	// Fonts to use
