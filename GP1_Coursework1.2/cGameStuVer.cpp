@@ -53,8 +53,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	theAreaClicked = { 0, 0 };
 	// Store the textures
-	textureName = { "sea", "bottle", "ship","enemy","theBackground", "OpeningScreen", "ClosingScreen", "HScoreScreen"};
-	texturesToUse = { "Images/Sprites/sea64x64.png", "Images/Sprites/PurpleOrb.png", "Images/Sprites/shipGreen64x64.png", "Images/Sprites/Enemy1.png","Images/Bkg/Bkgnd.png", "Images/Bkg/OpeningScreenF.png", "Images/Bkg/ClosingScreenF.png","Images/Bkg/BkgndHS.png" };
+	textureName = { "sea", "bottle", "ship","enemy","theBackground", "Bullet", "OpeningScreen", "ClosingScreen", "HScoreScreen"};
+	texturesToUse = { "Images/Sprites/sea64x64.png", "Images/Sprites/PurpleOrb.png", "Images/Sprites/shipGreen64x64.png", "Images/Sprites/Enemy1.png","Images/Bkg/Bkgnd.png", "Images/Sprites/Bullet.png", "Images/Bkg/OpeningScreenF.png", "Images/Bkg/ClosingScreenF.png","Images/Bkg/BkgndHS.png" };
 	for (unsigned int tCount = 0; tCount < textureName.size(); tCount++)
 	{	
 		theTextureMgr->addTexture(textureName[tCount], texturesToUse[tCount]);
@@ -96,7 +96,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	}
 	// Create text Textures
 	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "ThanksTxt", "SeeYouTxt","BottleCount","HSTable","HScore"};
-	gameTextList = { "Pirate  Treasure", "Collect the bottles of Rum!", "Use the arrow keys to navigate the map.", "Thanks for playing!", "See you again soon!", "Collected: ", "", "High Score"};
+	gameTextList = { "Pirate  Treasure", "Collect the bottles of Rum!", "Use 'W' and 'S' to navigate the map.", "Thanks for playing!", "See you again soon!", "Collected: ", "", "High Score"};
 	for (unsigned int text = 0; text < gameTextNames.size(); text++)
 	{
 		if (text == 0 || text == gameTextNames.size()-1)
@@ -211,6 +211,12 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theTileMap.renderGridLines(theRenderer, aRect, aColour);
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 850, 600 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
+		
+		// Render each bullet in the vector array
+		for (int draw = 0; draw < (int)theBullets.size(); draw++)
+		{
+			theBullets[draw]->render(theRenderer, &theBullets[draw]->getSpriteDimensions(), &theBullets[draw]->getSpritePos(), theBullets[draw]->getSpriteRotAngle(), &theBullets[draw]->getSpriteCentre(), theBullets[draw]->getSpriteScale());
+		}
 	}
 	break;
 	case gameState::end:
@@ -332,6 +338,67 @@ void cGame::update(double deltaTime)
 
 	if (theGameState == gameState::playing)
 	{
+		// Update the visibility and position of each bullet
+		vector<cBullet*>::iterator bulletIterartor = theBullets.begin();
+		while (bulletIterartor != theBullets.end())
+		{
+			if ((*bulletIterartor)->isActive() == false)
+			{
+				bulletIterartor = theBullets.erase(bulletIterartor);
+			}
+			else
+			{
+				(*bulletIterartor)->update(deltaTime);
+				++bulletIterartor;
+			}
+		}
+		// Update the visibility and position of each explosion
+		vector<cSprite*>::iterator expIterartor = theExplosions.begin();
+		while (expIterartor != theExplosions.end())
+		{
+			if ((*expIterartor)->isActive() == false)
+			{
+				expIterartor = theExplosions.erase(expIterartor);
+			}
+			else
+			{
+				(*expIterartor)->animate(deltaTime);
+				++expIterartor;
+			}
+		}
+
+		/*
+		==============================================================
+		| Check for collisions
+		==============================================================
+		*/
+		for (vector<cBullet*>::iterator bulletIterartor = theBullets.begin(); bulletIterartor != theBullets.end(); ++bulletIterartor)
+		{
+			//(*bulletIterartor)->update(deltaTime);
+			for (vector<cEnemy*>::iterator asteroidIterator = thePirate.begin(); asteroidIterator != thePirate.end(); ++asteroidIterator)
+			{
+				if ((*asteroidIterator)->collidedWith(&(*asteroidIterator)->getBoundingRect(), &(*bulletIterartor)->getBoundingRect()))
+				{
+					// if a collision set the bullet and asteroid to false
+					(*asteroidIterator)->setActive(false);
+					(*bulletIterartor)->setActive(false);
+					theExplosions.push_back(new cSprite);
+					int index = theExplosions.size() - 1;
+					theExplosions[index]->setSpriteTranslation({ 0, 0 });
+					theExplosions[index]->setActive(true);
+					theExplosions[index]->setNoFrames(16);
+					theExplosions[index]->setTexture(theTextureMgr->getTexture("explosion"));
+					theExplosions[index]->setSpriteDimensions(theTextureMgr->getTexture("explosion")->getTWidth() / theExplosions[index]->getNoFrames(), theTextureMgr->getTexture("explosion")->getTHeight());
+					theExplosions[index]->setSpritePos({ (*asteroidIterator)->getSpritePos().x + (int)((*asteroidIterator)->getSpritePos().w / 2), (*asteroidIterator)->getSpritePos().y + (int)((*asteroidIterator)->getSpritePos().h / 2) });
+
+					theSoundMgr->getSnd("explosion")->play(0);
+
+					// Lab 7 code goes here
+
+				}
+			}
+		}
+
 		//if ((int)timer % 4 == 0)
 		//{
 		//	thePirate.genRandomPos(theShip.getMapPosition(), theBottle.getMapPosition());
@@ -352,7 +419,7 @@ void cGame::update(double deltaTime)
 		{
 			thePirate.setEnemyRotation(0.0f);
 			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
-			if ((int)timer % 4 == 0)
+			if ((int)timer % 15 == 0)
 			{
 				thePirate.update(thePirate.getMapPosition().C + 1, thePirate.getMapPosition().R);
 			}
@@ -489,17 +556,18 @@ bool cGame::getInput(bool theLoop)
 				break;
 				case SDLK_SPACE:
 				{
-					/*theBullets.push_back(new cBullet);
+					theBullets.push_back(new cBullet);
 					int numBullets = theBullets.size() - 1;
 					theBullets[numBullets]->setSpritePos({ theShip.getBoundingRect().x + theShip.getSpriteCentre().x, theShip.getBoundingRect().y + theShip.getSpriteCentre().y });
 					theBullets[numBullets]->setSpriteTranslation({ 50, 50 });
-					theBullets[numBullets]->setTexture(theTextureMgr->getTexture("photon"));
-					theBullets[numBullets]->setSpriteDimensions(theTextureMgr->getTexture("photon")->getTWidth(), theTextureMgr->getTexture("photon")->getTHeight());
+					theBullets[numBullets]->setTexture(theTextureMgr->getTexture("Bullet"));
+					theBullets[numBullets]->setSpriteDimensions(theTextureMgr->getTexture("Bullet")->getTWidth(), theTextureMgr->getTexture("Bullet")->getTHeight());
 					theBullets[numBullets]->setBulletVelocity(50);
 					theBullets[numBullets]->setSpriteRotAngle(theShip.getSpriteRotAngle());
 					theBullets[numBullets]->setActive(true);
 					cout << "Bullet added to Vector at position - x: " << theShip.getBoundingRect().x << " y: " << theShip.getBoundingRect().y << endl;
-				*/}
+				}
+				
 
 				break;
 				default:

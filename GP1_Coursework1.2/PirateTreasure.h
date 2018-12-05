@@ -11,6 +11,7 @@
 #include "cTileMap.h"
 #include "cButton.h"
 #include "cShip.h"
+#include "cBullet.h"
 #include "cBottle.h"
 #include "cHighScoreTable.h"
 #include "cEnemy.h"
