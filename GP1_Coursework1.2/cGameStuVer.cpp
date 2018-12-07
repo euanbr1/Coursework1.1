@@ -54,7 +54,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theAreaClicked = { 0, 0 };
 	// Store the textures
 	textureName = { "sea", "bottle", "ship","enemy","theBackground", "Bullet", "OpeningScreen", "ClosingScreen", "HScoreScreen"};
-	texturesToUse = { "Images/Sprites/Snow.png", "Images/Sprites/pBauble.png", "Images/Sprites/shipGreen64x64.png", "Images/Sprites/Enemy1.png","Images/Bkg/Bkgnd.png", "Images/Sprites/Bullet.png", "Images/Bkg/MainMenu.png", "Images/Bkg/endGame.png","Images/Bkg/Hscore.png" };
+	texturesToUse = { "Images/Sprites/Snow.png", "Images/Sprites/pBauble.png", "Images/Sprites/Santa.png", "Images/Sprites/Enemy1.png","Images/Bkg/Bkgnd.png", "Images/Sprites/Bullet.png", "Images/Bkg/MainMenu.png", "Images/Bkg/endGame.png","Images/Bkg/Hscore.png" };
 	for (unsigned int tCount = 0; tCount < textureName.size(); tCount++)
 	{	
 		theTextureMgr->addTexture(textureName[tCount], texturesToUse[tCount]);
@@ -64,7 +64,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	aColour = { 228, 213, 238, 255 };
 	// Store the textures
 	btnNameList = { "exit_btn", "instructions_btn", "load_btn", "menu_btn", "play_btn", "save_btn", "settings_btn", "hs_btn" };
-	btnTexturesToUse = { "Images/Buttons/Exit.png", "Images/Buttons/button_instructions.png", "Images/Buttons/button_load.png", "Images/Buttons/button_menu.png", "Images/Buttons/Start.png", "Images/Buttons/button_save.png", "Images/Buttons/button_settings.png", "Images/Buttons/hScore.png" };
+	btnTexturesToUse = { "Images/Buttons/Quit.png", "Images/Buttons/button_instructions.png", "Images/Buttons/button_load.png", "Images/Buttons/Menu.png", "Images/Buttons/Start.png", "Images/Buttons/button_save.png", "Images/Buttons/button_settings.png", "Images/Buttons/hScore.png" };
 	btnPos = { { 400, 375 }, { 400, 300 }, { 400, 300 }, { 500, 900 }, { 400, 200 }, { 740, 500 }, { 400, 300 }, { 400, 500 } };
 	for (unsigned int bCount = 0; bCount < btnNameList.size(); bCount++)
 	{
@@ -82,16 +82,16 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theBtnType = btnTypes::exit;
 	// Create textures for Game Dialogue (text)
 	fontList = { "pirate", "skeleton" };
-	fontsToUse = { "Fonts/BlackPearl.ttf", "Fonts/SkeletonCloset.ttf" };
+	fontsToUse = { "Fonts/Otto.ttf", "Fonts/Curve.ttf" };
 	for (unsigned int fonts = 0; fonts < fontList.size(); fonts++)
 	{
 		if (fonts == 0)
 		{
-			theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 48);
+			theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 125);
 		}
 		else
 		{
-			theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 36);
+			theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 45);
 		}
 	}
 	// Create text Textures
@@ -177,21 +177,21 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		// Render the Title
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
-		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 10, 8, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		scale = { 1, 1 };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("CollectTxt");
-		pos = { 25, 100, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 25, 80, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("InstructTxt");
-		pos = { 25, 175, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 25, 150, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		// Render Button
 		theButtonMgr->getBtn("play_btn")->setSpritePos({ 500, 275});
 		theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
-		theButtonMgr->getBtn("hs_btn")->setSpritePos({ 485, 400 });
+		theButtonMgr->getBtn("hs_btn")->setSpritePos({ 460, 375 });
 		theButtonMgr->getBtn("hs_btn")->render(theRenderer, &theButtonMgr->getBtn("hs_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("hs_btn")->getSpritePos(), theButtonMgr->getBtn("hs_btn")->getSpriteScale());
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 550 });
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 475 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	}
 	break;
@@ -201,7 +201,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("OpeningScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
-		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 2, 2, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		theTextureMgr->addTexture("BottleCount", theFontMgr->getFont("pirate")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
 		tempTextTexture = theTextureMgr->getTexture("BottleCount");
@@ -209,7 +209,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		theTileMap.render(theSDLWND, theRenderer, theTextureMgr, textureName);
 		theTileMap.renderGridLines(theRenderer, aRect, aColour);
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 850, 600 });
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 750, 600 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 		
 		// Render each bullet in the vector array
@@ -233,9 +233,9 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture = theTextureMgr->getTexture("SeeYouTxt");
 		pos = { 50, 175, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 275 });
+		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 225 });
 		theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 550, 325 });
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 350});
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	}
 	break;
@@ -257,12 +257,10 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 
 		// Render Button
-		theButtonMgr->getBtn("play_btn")->setSpritePos({ 900, 375 });
+		theButtonMgr->getBtn("play_btn")->setSpritePos({ 700, 350 });
 		theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
-		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 900, 425 });
+		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 700, 450 });
 		theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 900, 475 });
-		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	}
 	break;
 	case gameState::quit:
@@ -318,8 +316,8 @@ void cGame::update(double deltaTime)
 			theTileMap.update(theBottle.getMapPosition(), 1, 0.0f);
 			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
 			theShip.setMapPosition(5, 8);
-			theBottle.setMapPosition(5, 0);
-			thePirate.setMapPosition(6, 0);
+			theBottle.setMapPosition(4, 8);
+			thePirate.setMapPosition(1, 0);
 			
 			// Lab Code goes here
 			theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
@@ -415,7 +413,7 @@ void cGame::update(double deltaTime)
 			strScore += to_string(bottlesCollected).c_str();
 			theTextureMgr->deleteTexture("BottleCount");
 		}
-		if (theGameState == gameState::playing && thePirate.getMapPosition().R < 9)
+		if (theGameState == gameState::playing && thePirate.getMapPosition().R < 8, thePirate.getMapPosition().C <8) //Restrict enemy movement
 		{
 			thePirate.setEnemyRotation(0.0f);
 			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);

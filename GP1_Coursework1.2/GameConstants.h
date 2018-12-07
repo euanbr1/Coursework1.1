@@ -30,7 +30,7 @@ using namespace std::chrono;
 using namespace std;
 
 //Define the string to appear in the top left corner of the window
-#define WINDOW_TITLE "Pirate Treasure"
+#define WINDOW_TITLE "Protect Christmas"
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
 
