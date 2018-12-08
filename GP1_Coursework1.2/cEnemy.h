@@ -40,5 +40,17 @@ public:
 	void setEnemyRotation(float angle);
 	float getEnemyRotation();
 	void genRandomPos(MapRC ship, MapRC bottle);
+
+	void update(double deltaTime);		// Rocket update method
+	void setEnemyVelocity(int enemyVel);   // Sets the velocity for the asteroid
+	int getEnemyVelocity();				 // Gets the asteroid velocity
+
+	private:
+		int enemyVelocity;
+
+
+
+
+
 };
 

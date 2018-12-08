@@ -47,6 +47,11 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	SDL_SetRenderDrawColor(theRenderer, 0, 0, 0, 255);
 	SDL_RenderPresent(theRenderer);
 	
+	/* Let the computer pick a random number */
+	random_device rd;    // non-deterministic engine 
+	mt19937 gen{ rd() }; // deterministic engine. For most common uses, std::mersenne_twister_engine, fast and high-quality.
+	uniform_int_distribution<> EnemyDis{ -5, 5 };
+
 	theTextureMgr->setRenderer(theRenderer);
 	theFontMgr->initFontLib();
 	theSoundMgr->initMixer();	
@@ -82,7 +87,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theBtnType = btnTypes::exit;
 	// Create textures for Game Dialogue (text)
 	fontList = { "pirate", "skeleton" };
-	fontsToUse = { "Fonts/Otto.ttf", "Fonts/Curve.ttf" };
+	fontsToUse = { "Fonts/Otto.ttf", "Fonts/Motion.ttf" };
 	for (unsigned int fonts = 0; fonts < fontList.size(); fonts++)
 	{
 		if (fonts == 0)
@@ -91,7 +96,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 		else
 		{
-			theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 45);
+			theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 60);
 		}
 	}
 	// Create text Textures
@@ -101,11 +106,11 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		if (text == 0 || text == gameTextNames.size()-1)
 		{
-			theTextureMgr->addTexture(gameTextNames[text], theFontMgr->getFont("pirate")->createTextTexture(theRenderer, gameTextList[text], textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+			theTextureMgr->addTexture(gameTextNames[text], theFontMgr->getFont("pirate")->createTextTexture(theRenderer, gameTextList[text], textType::solid, { 0, 0, 0, 0 }, { 0, 255, 0, 255 }));
 		}
 		else
 		{
-			theTextureMgr->addTexture(gameTextNames[text], theFontMgr->getFont("skeleton")->createTextTexture(theRenderer, gameTextList[text], textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+			theTextureMgr->addTexture(gameTextNames[text], theFontMgr->getFont("skeleton")->createTextTexture(theRenderer, gameTextList[text], textType::solid, { 0, 0, 0, 0 }, { 0, 255, 0, 255 }));
 		}
 	}
 	// Load game sounds
@@ -138,11 +143,23 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theHSTableSize = theHSTable.getTableSize();
 	highScoreTextures = { "score1","score2","score3","score4","score5","score6","score7","score8","score9","score10" };
 
+	// Create vector array of textures
+
+	/*for (int elf = 0; elf < 5; elf++)
+	{
+		thePirates.push_back(new cEnemy);
+		thePirates[elf]->setMapPosition(1, 0);
+		thePirates[elf]->setSpriteTranslation({ 100, -50 });
+		thePirates[elf]->setTexture(theTextureMgr->getTexture("enemy"));
+		thePirates[elf]->setSpriteDimensions(theTextureMgr->getTexture("enemy")->getTWidth(), theTextureMgr->getTexture("enemy")->getTHeight());
+		thePirates[elf]->setEnemyVelocity(200);
+		thePirates[elf]->setActive(true);
+	}*/
 	for (int item = 0; item < theHSTableSize; item++)
 	{
 		string entry = "";
 		entry += theHSTable.getItem(item).Name + " " + to_string(theHSTable.getItem(item).score);
-		theTextureMgr->addTexture(highScoreTextures[item], theFontMgr->getFont("skeleton")->createTextTexture(theRenderer, entry.c_str(), textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+		theTextureMgr->addTexture(highScoreTextures[item], theFontMgr->getFont("skeleton")->createTextTexture(theRenderer, entry.c_str(), textType::solid, { 0, 0, 0, 0 }, { 0, 255, 0, 255 }));
  	}
 
 	timer = 0;
@@ -181,10 +198,10 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		scale = { 1, 1 };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("CollectTxt");
-		pos = { 25, 80, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 325, 125, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("InstructTxt");
-		pos = { 25, 150, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 325, 175, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		// Render Button
 		theButtonMgr->getBtn("play_btn")->setSpritePos({ 500, 275});
@@ -203,7 +220,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
 		pos = { 2, 2, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		theTextureMgr->addTexture("BottleCount", theFontMgr->getFont("pirate")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+		theTextureMgr->addTexture("BottleCount", theFontMgr->getFont("pirate")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 0, 0, 0 }, { 0, 255, 0, 255 }));
 		tempTextTexture = theTextureMgr->getTexture("BottleCount");
 		pos = { 600, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
@@ -212,6 +229,12 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 750, 600 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 		
+		// Render each asteroid in the vector array
+		/*for (int draw = 0; draw < (int)thePirates.size(); draw++)
+		{
+			thePirates[draw]->render(theRenderer, &thePirates[draw]->getSpriteDimensions(), &thePirates[draw]->getMapPosition(), thePirates[draw]->getSpriteRotAngle(), &thePirates[draw]->getSpriteCentre(), thePirates[draw]->getSpriteScale());
+		}
+		*/
 		// Render each bullet in the vector array
 		for (int draw = 0; draw < (int)theBullets.size(); draw++)
 		{
@@ -316,7 +339,7 @@ void cGame::update(double deltaTime)
 			theTileMap.update(theBottle.getMapPosition(), 1, 0.0f);
 			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
 			theShip.setMapPosition(5, 8);
-			theBottle.setMapPosition(4, 8);
+			theBottle.setMapPosition(4, 2);
 			thePirate.setMapPosition(1, 0);
 			
 			// Lab Code goes here
@@ -336,6 +359,22 @@ void cGame::update(double deltaTime)
 
 	if (theGameState == gameState::playing)
 	{
+		/*vector<cEnemy*>::iterator PirateIterator = thePirates.begin();
+		while (PirateIterator != thePirates.end())
+		{
+			if ((*PirateIterator)->isActive() == false)
+			{
+				PirateIterator = thePirates.erase(PirateIterator);
+			}
+			else
+			{
+				(*PirateIterator)->update(deltaTime);
+				if ((*PirateIterator)->getSpritePos().x >= WINDOW_WIDTH)
+				{
+					(*PirateIterator)->setSpriteTranslation({ (*PirateIterator)->getSpriteTranslation().x * (-1), (*PirateIterator)->getSpriteTranslation().y * (-1) });
+				}			++PirateIterator;
+			}
+		}*/
 		// Update the visibility and position of each bullet
 		vector<cBullet*>::iterator bulletIterartor = theBullets.begin();
 		while (bulletIterartor != theBullets.end())
@@ -373,12 +412,12 @@ void cGame::update(double deltaTime)
 		for (vector<cBullet*>::iterator bulletIterartor = theBullets.begin(); bulletIterartor != theBullets.end(); ++bulletIterartor)
 		{
 			//(*bulletIterartor)->update(deltaTime);
-			for (vector<cEnemy*>::iterator asteroidIterator = thePirates.begin(); asteroidIterator != thePirates.end(); ++asteroidIterator)
+			for (vector<cEnemy*>::iterator PirateIterator = thePirates.begin(); PirateIterator != thePirates.end(); ++PirateIterator)
 			{
-				if ((*asteroidIterator)->collidedWith(&(*asteroidIterator)->getBoundingRect(), &(*bulletIterartor)->getBoundingRect()))
+				if ((*PirateIterator)->collidedWith(&(*PirateIterator)->getBoundingRect(), &(*bulletIterartor)->getBoundingRect()))
 				{
-					// if a collision set the bullet and asteroid to false
-					(*asteroidIterator)->setActive(false);
+					// if a collision set the bullet and elf to false
+					(*PirateIterator)->setActive(false);
 					(*bulletIterartor)->setActive(false);
 					theExplosions.push_back(new cSprite);
 					int index = theExplosions.size() - 1;
@@ -387,7 +426,7 @@ void cGame::update(double deltaTime)
 					theExplosions[index]->setNoFrames(16);
 					theExplosions[index]->setTexture(theTextureMgr->getTexture("explosion"));
 					theExplosions[index]->setSpriteDimensions(theTextureMgr->getTexture("explosion")->getTWidth() / theExplosions[index]->getNoFrames(), theTextureMgr->getTexture("explosion")->getTHeight());
-					theExplosions[index]->setSpritePos({ (*asteroidIterator)->getSpritePos().x + (int)((*asteroidIterator)->getSpritePos().w / 2), (*asteroidIterator)->getSpritePos().y + (int)((*asteroidIterator)->getSpritePos().h / 2) });
+					theExplosions[index]->setSpritePos({ (*PirateIterator)->getSpritePos().x + (int)((*PirateIterator)->getSpritePos().w / 2), (*PirateIterator)->getSpritePos().y + (int)((*PirateIterator)->getSpritePos().h / 2) });
 
 					theSoundMgr->getSnd("explosion")->play(0);
 
@@ -424,6 +463,17 @@ void cGame::update(double deltaTime)
 			
 			theTileMap.update(thePirate.getMapPosition(), 4, thePirate.getEnemyRotation());
 			//Sleep(900);
+		}
+		if (theGameState == gameState::playing && theBottle.getMapPosition().R < 8, theBottle.getMapPosition().C <8) //Restrict Bottle movement
+		{
+			theBottle.setBottleRotation(0.0f);
+			theTileMap.update(theBottle.getMapPosition(), 1, 0.0f);
+			if ((int)timer % 20 == 0)
+			{
+				theBottle.update(theBottle.getMapPosition().C + 1, theBottle.getMapPosition().R);
+			}
+
+			theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
 		}
 		// Check if Pirate has collided with the ship
 		// Lab Code goes here
