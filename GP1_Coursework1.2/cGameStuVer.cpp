@@ -70,7 +70,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	// Store the textures
 	btnNameList = { "exit_btn", "instructions_btn", "load_btn", "menu_btn", "play_btn", "save_btn", "settings_btn", "hs_btn" };
 	btnTexturesToUse = { "Images/Buttons/Quit.png", "Images/Buttons/button_instructions.png", "Images/Buttons/button_load.png", "Images/Buttons/Menu.png", "Images/Buttons/Start.png", "Images/Buttons/button_save.png", "Images/Buttons/button_settings.png", "Images/Buttons/hScore.png" };
-	btnPos = { { 400, 375 }, { 400, 300 }, { 400, 300 }, { 500, 900 }, { 400, 200 }, { 740, 500 }, { 400, 300 }, { 400, 500 } };
+	btnPos = { { 400, 475 }, { 400, 300 }, { 400, 300 }, { 500, 900 }, { 400, 200 }, { 740, 500 }, { 400, 300 }, { 400, 500 } };
 	for (unsigned int bCount = 0; bCount < btnNameList.size(); bCount++)
 	{
 		theTextureMgr->addTexture(btnNameList[bCount], btnTexturesToUse[bCount]);
@@ -87,7 +87,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theBtnType = btnTypes::exit;
 	// Create textures for Game Dialogue (text)
 	fontList = { "pirate", "skeleton" };
-	fontsToUse = { "Fonts/Otto.ttf", "Fonts/Motion.ttf" };
+	fontsToUse = { "Fonts/Otto.ttf", "Fonts/Otto.ttf" };
 	for (unsigned int fonts = 0; fonts < fontList.size(); fonts++)
 	{
 		if (fonts == 0)
@@ -96,7 +96,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 		else
 		{
-			theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 60);
+			theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 70);
 		}
 	}
 	// Create text Textures
@@ -339,7 +339,7 @@ void cGame::update(double deltaTime)
 			theTileMap.update(theBottle.getMapPosition(), 1, 0.0f);
 			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
 			theShip.setMapPosition(5, 8);
-			theBottle.setMapPosition(4, 2);
+			theBottle.setMapPosition(4, 0);
 			thePirate.setMapPosition(1, 0);
 			
 			// Lab Code goes here
@@ -359,20 +359,21 @@ void cGame::update(double deltaTime)
 
 	if (theGameState == gameState::playing)
 	{
-		/*vector<cEnemy*>::iterator PirateIterator = thePirates.begin();
-		while (PirateIterator != thePirates.end())
+		
+		/*vector<cEnemy*>::iterator ElfIterator = thePirates.begin();
+		while (ElfIterator != thePirates.end())
 		{
-			if ((*PirateIterator)->isActive() == false)
+			if ((*ElfIterator)->isActive() == false)
 			{
-				PirateIterator = thePirates.erase(PirateIterator);
+				ElfIterator = thePirates.erase(ElfIterator);
 			}
 			else
 			{
-				(*PirateIterator)->update(deltaTime);
-				if ((*PirateIterator)->getSpritePos().x >= WINDOW_WIDTH)
+				(*ElfIterator)->update(deltaTime);
+				if ((*ElfIterator)->getSpritePos().x >= WINDOW_WIDTH)
 				{
-					(*PirateIterator)->setSpriteTranslation({ (*PirateIterator)->getSpriteTranslation().x * (-1), (*PirateIterator)->getSpriteTranslation().y * (-1) });
-				}			++PirateIterator;
+					(*ElfIterator)->setSpriteTranslation({ (*ElfIterator)->getSpriteTranslation().x * (-1), (*ElfIterator)->getSpriteTranslation().y * (-1) });
+				}			++ElfIterator;
 			}
 		}*/
 		// Update the visibility and position of each bullet
@@ -412,12 +413,12 @@ void cGame::update(double deltaTime)
 		for (vector<cBullet*>::iterator bulletIterartor = theBullets.begin(); bulletIterartor != theBullets.end(); ++bulletIterartor)
 		{
 			//(*bulletIterartor)->update(deltaTime);
-			for (vector<cEnemy*>::iterator PirateIterator = thePirates.begin(); PirateIterator != thePirates.end(); ++PirateIterator)
+			for (vector<cEnemy*>::iterator ElfIterator = thePirates.begin(); ElfIterator != thePirates.end(); ++ElfIterator)
 			{
-				if ((*PirateIterator)->collidedWith(&(*PirateIterator)->getBoundingRect(), &(*bulletIterartor)->getBoundingRect()))
+				if ((*ElfIterator)->collidedWith(&(*ElfIterator)->getBoundingRect(), &(*bulletIterartor)->getBoundingRect()))
 				{
 					// if a collision set the bullet and elf to false
-					(*PirateIterator)->setActive(false);
+					(*ElfIterator)->setActive(false);
 					(*bulletIterartor)->setActive(false);
 					theExplosions.push_back(new cSprite);
 					int index = theExplosions.size() - 1;
@@ -426,7 +427,7 @@ void cGame::update(double deltaTime)
 					theExplosions[index]->setNoFrames(16);
 					theExplosions[index]->setTexture(theTextureMgr->getTexture("explosion"));
 					theExplosions[index]->setSpriteDimensions(theTextureMgr->getTexture("explosion")->getTWidth() / theExplosions[index]->getNoFrames(), theTextureMgr->getTexture("explosion")->getTHeight());
-					theExplosions[index]->setSpritePos({ (*PirateIterator)->getSpritePos().x + (int)((*PirateIterator)->getSpritePos().w / 2), (*PirateIterator)->getSpritePos().y + (int)((*PirateIterator)->getSpritePos().h / 2) });
+					theExplosions[index]->setSpritePos({ (*ElfIterator)->getSpritePos().x + (int)((*ElfIterator)->getSpritePos().w / 2), (*ElfIterator)->getSpritePos().y + (int)((*ElfIterator)->getSpritePos().h / 2) });
 
 					theSoundMgr->getSnd("explosion")->play(0);
 
@@ -441,6 +442,20 @@ void cGame::update(double deltaTime)
 		//	thePirate.genRandomPos(theShip.getMapPosition(), theBottle.getMapPosition());
 		//	theTileMap.update(thePirate.getMapPosition(), 4, thePirate.getEnemyRotation());
 		//}
+		if (theGameState == gameState::playing && thePirate.getMapPosition().R < 8, thePirate.getMapPosition().C <8) //Restrict enemy movement
+		{
+			thePirate.setEnemyRotation(0.0f);
+			if (frames % 20 == 0)
+			{
+				theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
+				thePirate.update(thePirate.getMapPosition().C + 1, thePirate.getMapPosition().R);
+				theTileMap.update(thePirate.getMapPosition(), 4, thePirate.getEnemyRotation());
+
+
+			}
+			//Sleep(900);
+		}
+
 		// Check if ship has collided with the bottle
 		if (theShip.getMapPosition() == theBottle.getMapPosition())
 		{
@@ -451,30 +466,21 @@ void cGame::update(double deltaTime)
 			strScore = gameTextList[5];
 			strScore += to_string(bottlesCollected).c_str();
 			theTextureMgr->deleteTexture("BottleCount");
-		}
-		if (theGameState == gameState::playing && thePirate.getMapPosition().R < 8, thePirate.getMapPosition().C <8) //Restrict enemy movement
-		{
-			thePirate.setEnemyRotation(0.0f);
-			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
-			if ((int)timer % 15 == 0)
-			{
-				thePirate.update(thePirate.getMapPosition().C + 1, thePirate.getMapPosition().R);
-			}
-			
-			theTileMap.update(thePirate.getMapPosition(), 4, thePirate.getEnemyRotation());
-			//Sleep(900);
+
 		}
 		if (theGameState == gameState::playing && theBottle.getMapPosition().R < 8, theBottle.getMapPosition().C <8) //Restrict Bottle movement
 		{
 			theBottle.setBottleRotation(0.0f);
 			theTileMap.update(theBottle.getMapPosition(), 1, 0.0f);
-			if ((int)timer % 20 == 0)
+			if (frames % 15 == 0)
 			{
 				theBottle.update(theBottle.getMapPosition().C + 1, theBottle.getMapPosition().R);
 			}
 
-			theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
+
 		}
+
+		theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
 		// Check if Pirate has collided with the ship
 		// Lab Code goes here
 
@@ -482,6 +488,8 @@ void cGame::update(double deltaTime)
 		{
 			theGameState = gameState::end;
 		}
+
+		frames++;
 	}
 }
 
@@ -606,8 +614,9 @@ bool cGame::getInput(bool theLoop)
 				{
 					theBullets.push_back(new cBullet);
 					int numBullets = theBullets.size() - 1;
-					theBullets[numBullets]->setSpritePos({ theShip.getBoundingRect().x + theShip.getSpriteCentre().x, theShip.getBoundingRect().y + theShip.getSpriteCentre().y });
-					theBullets[numBullets]->setSpriteTranslation({ 50, 50 });
+					SDL_Point bulletPos = { (theShip.getMapPosition().C * 64)+150, (theShip.getMapPosition().R * 64)+100};
+					theBullets[numBullets]->setSpritePos({ bulletPos.x, bulletPos.y });
+					theBullets[numBullets]->setSpriteTranslation({ 50, 1 });
 					theBullets[numBullets]->setTexture(theTextureMgr->getTexture("Bullet"));
 					theBullets[numBullets]->setSpriteDimensions(theTextureMgr->getTexture("Bullet")->getTWidth(), theTextureMgr->getTexture("Bullet")->getTHeight());
 					theBullets[numBullets]->setBulletVelocity(50);

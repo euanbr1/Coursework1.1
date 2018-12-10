@@ -99,6 +99,7 @@ private:
 	string theHighScoreTable;
 	int theHSTableSize;
 	double timer;
+	int frames = 1;
 };
 
 #endif
