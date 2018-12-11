@@ -58,8 +58,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	theAreaClicked = { 0, 0 };
 	// Store the textures
-	textureName = { "sea", "bottle", "ship","enemy","theBackground", "Bullet", "OpeningScreen", "ClosingScreen", "HScoreScreen"};
-	texturesToUse = { "Images/Sprites/Snow.png", "Images/Sprites/pBauble.png", "Images/Sprites/Santa.png", "Images/Sprites/Enemy1.png","Images/Bkg/Bkgnd.png", "Images/Sprites/Bullet.png", "Images/Bkg/MainMenu.png", "Images/Bkg/endGame.png","Images/Bkg/Hscore.png" };
+	textureName = { "sea", "bottle", "ship","enemy","theBackground", "Bullet", "OpeningScreen", "ClosingScreen", "HScoreScreen", "explosion"};
+	texturesToUse = { "Images/Sprites/Snow.png", "Images/Sprites/pBauble.png", "Images/Sprites/Santa.png", "Images/Sprites/Enemy1.png","Images/Bkg/Bkgnd.png", "Images/Sprites/Bullet.png", "Images/Bkg/MainMenu.png", "Images/Bkg/endGame.png","Images/Bkg/Hscore.png", "Images/Sprites/explosion.png" };
 	for (unsigned int tCount = 0; tCount < textureName.size(); tCount++)
 	{	
 		theTextureMgr->addTexture(textureName[tCount], texturesToUse[tCount]);
@@ -255,11 +255,17 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("SeeYouTxt");
 		pos = { 50, 175, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
-		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		tempTextTexture = theTextureMgr->getTexture("BottleCount");
 		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 225 });
 		theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 350});
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
+		
+		//render Score
+		cTexture* tempTextTexture = theTextureMgr->getTexture("BottleCount");
+		SDL_Rect pos = { 50, 175, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		FPoint scale = { 1, 1 };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 	}
 	break;
 	case gameState::highscore:
@@ -340,8 +346,18 @@ void cGame::update(double deltaTime)
 			theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
 			theShip.setMapPosition(5, 8);
 			theBottle.setMapPosition(4, 0);
-			thePirate.setMapPosition(1, 0);
-			
+			//thePirate.setMapPosition(1, 0);
+			thePirates.push_back(new cEnemy);
+			int numPirates = thePirates.size() - 1;
+			thePirates[numPirates]->setMapPosition(1, 0);
+			SDL_Point enemyPos = { (thePirates[numPirates]->getMapPosition().C * 64) + 150, (thePirates[numPirates]->getMapPosition().R * 64) + 100 };
+			thePirates[numPirates]->setSpritePos({ enemyPos.x, enemyPos.y });
+			thePirates[numPirates]->setSpriteTranslation({ 50, 1 });
+			thePirates[numPirates]->setTexture(theTextureMgr->getTexture("enemy"));
+			thePirates[numPirates]->setSpriteDimensions(theTextureMgr->getTexture("enemy")->getTWidth(), theTextureMgr->getTexture("enemy")->getTHeight());
+			thePirates[numPirates]->setActive(true);
+			cout << "Bullet added to Vector at position - x: " << theShip.getBoundingRect().x << " y: " << theShip.getBoundingRect().y << endl;
+
 			// Lab Code goes here
 			theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
 			theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
@@ -360,7 +376,7 @@ void cGame::update(double deltaTime)
 	if (theGameState == gameState::playing)
 	{
 		
-		/*vector<cEnemy*>::iterator ElfIterator = thePirates.begin();
+		vector<cEnemy*>::iterator ElfIterator = thePirates.begin();
 		while (ElfIterator != thePirates.end())
 		{
 			if ((*ElfIterator)->isActive() == false)
@@ -369,13 +385,18 @@ void cGame::update(double deltaTime)
 			}
 			else
 			{
+				SDL_Point elfPos = { ((*ElfIterator)->getMapPosition().C * 64) + 150, ((*ElfIterator)->getMapPosition().R * 64) + 100 };
+				(*ElfIterator)->setBoundingRect({ elfPos.x, elfPos.y });
+
 				(*ElfIterator)->update(deltaTime);
-				if ((*ElfIterator)->getSpritePos().x >= WINDOW_WIDTH)
-				{
-					(*ElfIterator)->setSpriteTranslation({ (*ElfIterator)->getSpriteTranslation().x * (-1), (*ElfIterator)->getSpriteTranslation().y * (-1) });
-				}			++ElfIterator;
+				++ElfIterator;
+				//if ((*ElfIterator)->getSpritePos().x >= WINDOW_WIDTH)
+				//{
+				//	(*ElfIterator)->setSpriteTranslation({ (*ElfIterator)->getSpriteTranslation().x * (-1), (*ElfIterator)->getSpriteTranslation().y * (-1) });
+				//}			++ElfIterator;
+
 			}
-		}*/
+		}
 		// Update the visibility and position of each bullet
 		vector<cBullet*>::iterator bulletIterartor = theBullets.begin();
 		while (bulletIterartor != theBullets.end())
@@ -410,7 +431,7 @@ void cGame::update(double deltaTime)
 		| Check for collisions
 		==============================================================
 		*/
-		for (vector<cBullet*>::iterator bulletIterartor = theBullets.begin(); bulletIterartor != theBullets.end(); ++bulletIterartor)
+		for (vector<cBullet*>::iterator ElfIterator = theBullets.begin(); bulletIterartor != theBullets.end(); ++bulletIterartor)
 		{
 			//(*bulletIterartor)->update(deltaTime);
 			for (vector<cEnemy*>::iterator ElfIterator = thePirates.begin(); ElfIterator != thePirates.end(); ++ElfIterator)
@@ -445,7 +466,7 @@ void cGame::update(double deltaTime)
 		if (theGameState == gameState::playing && thePirate.getMapPosition().R < 8, thePirate.getMapPosition().C <8) //Restrict enemy movement
 		{
 			thePirate.setEnemyRotation(0.0f);
-			if (frames % 20 == 0)
+			if (frames % 25 == 0)
 			{
 				theTileMap.update(thePirate.getMapPosition(), 1, 0.0f);
 				thePirate.update(thePirate.getMapPosition().C + 1, thePirate.getMapPosition().R);
@@ -577,7 +598,7 @@ bool cGame::getInput(bool theLoop)
 				{
 					if (theGameState == gameState::playing && theShip.getMapPosition().R > 0)
 					{
-						theShip.setShipRotation(180.0f);
+						theShip.setShipRotation(0.0f);
 						theTileMap.update(theShip.getMapPosition(), 1, 0.0f);
 						theShip.update(theShip.getMapPosition().C, theShip.getMapPosition().R - 1);
 						theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
@@ -612,20 +633,23 @@ bool cGame::getInput(bool theLoop)
 				break;
 				case SDLK_SPACE:
 				{
-					theBullets.push_back(new cBullet);
-					int numBullets = theBullets.size() - 1;
-					SDL_Point bulletPos = { (theShip.getMapPosition().C * 64)+150, (theShip.getMapPosition().R * 64)+100};
-					theBullets[numBullets]->setSpritePos({ bulletPos.x, bulletPos.y });
-					theBullets[numBullets]->setSpriteTranslation({ 50, 1 });
-					theBullets[numBullets]->setTexture(theTextureMgr->getTexture("Bullet"));
-					theBullets[numBullets]->setSpriteDimensions(theTextureMgr->getTexture("Bullet")->getTWidth(), theTextureMgr->getTexture("Bullet")->getTHeight());
-					theBullets[numBullets]->setBulletVelocity(50);
-					theBullets[numBullets]->setSpriteRotAngle(theShip.getSpriteRotAngle());
-					theBullets[numBullets]->setActive(true);
-					cout << "Bullet added to Vector at position - x: " << theShip.getBoundingRect().x << " y: " << theShip.getBoundingRect().y << endl;
+					//if (frames % 4 == 0)
+					//{
+						theBullets.push_back(new cBullet);
+						int numBullets = theBullets.size() - 1;
+						SDL_Point bulletPos = { (theShip.getMapPosition().C * 64) + 150, (theShip.getMapPosition().R * 64) + 100 };
+						theBullets[numBullets]->setSpritePos({ bulletPos.x, bulletPos.y });
+						theBullets[numBullets]->setSpriteTranslation({ 50, 1 });
+						theBullets[numBullets]->setTexture(theTextureMgr->getTexture("Bullet"));
+						theBullets[numBullets]->setSpriteDimensions(theTextureMgr->getTexture("Bullet")->getTWidth(), theTextureMgr->getTexture("Bullet")->getTHeight());
+						theBullets[numBullets]->setBulletVelocity(50);
+						theBullets[numBullets]->setSpriteRotAngle(theShip.getSpriteRotAngle());
+						theBullets[numBullets]->setActive(true);
+						cout << "Bullet added to Vector at position - x: " << theShip.getBoundingRect().x << " y: " << theShip.getBoundingRect().y << endl;
+
+					//}
 				}
 				
-
 				break;
 				default:
 					break;

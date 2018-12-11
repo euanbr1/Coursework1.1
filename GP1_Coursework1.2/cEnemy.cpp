@@ -69,12 +69,13 @@ void cEnemy::update(double deltaTime)
 		this->setEnemyRotation(this->getEnemyRotation() - 360.0f);
 	}
 
-	SDL_Rect currentSpritePos = this->getSpritePos();
 	currentSpritePos.x += (int)(this->getSpriteTranslation().x * deltaTime);
 	currentSpritePos.y -= (int)(this->getSpriteTranslation().y * deltaTime);
-
+	
+	SDL_Rect currentSpritePos = this->getSpritePos();
 	this->setSpritePos({ currentSpritePos.x, currentSpritePos.y });
 	this->setBoundingRect(this->getSpritePos()); */
+	cout << "Enemy BR " << this->getBoundingRect().x << "," << this->getBoundingRect().y << endl;
 }
 
 /*void cEnemy::setEnemyVelocity(int AsteroidVel)
