@@ -55,7 +55,7 @@ bool cSound::load(LPCSTR filename)
 
 void cSound::play(int loop)
 {
-	switch (this->theSoundType)
+  	switch (this->theSoundType)
 	{
 		case soundType::sfx:
 		{

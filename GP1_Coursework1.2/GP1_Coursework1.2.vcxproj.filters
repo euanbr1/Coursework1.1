@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cBottle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,9 +39,6 @@
     <ClCompile Include="cSDL2WNDManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cShip.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cSound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,17 +57,20 @@
     <ClCompile Include="cTileMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PirateTreasureSDL2.cpp">
+    <ClCompile Include="cBullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cBullet.cpp">
+    <ClCompile Include="cPoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cSanta.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtectChristmasSDL2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cBottle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="cButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -98,9 +95,6 @@
     <ClInclude Include="cSDL2WNDManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cShip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="cSound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -122,10 +116,16 @@
     <ClInclude Include="GameConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PirateTreasure.h">
+    <ClInclude Include="cBullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cBullet.h">
+    <ClInclude Include="cPoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cSanta.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtectChristmas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -71,10 +71,10 @@ void cEnemy::update(double deltaTime)
 
 	currentSpritePos.x += (int)(this->getSpriteTranslation().x * deltaTime);
 	currentSpritePos.y -= (int)(this->getSpriteTranslation().y * deltaTime);
-	
+	*/
 	SDL_Rect currentSpritePos = this->getSpritePos();
 	this->setSpritePos({ currentSpritePos.x, currentSpritePos.y });
-	this->setBoundingRect(this->getSpritePos()); */
+	this->setBoundingRect(this->getSpritePos()); 
 	cout << "Enemy BR " << this->getBoundingRect().x << "," << this->getBoundingRect().y << endl;
 }
 

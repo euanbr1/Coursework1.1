@@ -10,7 +10,7 @@ cGame.h
 #include <SDL.h>
 
 // Game specific includes
-#include "PirateTreasure.h"
+#include "ProtectChristmas.h"
 #include<random>
 
 using namespace std;
@@ -44,7 +44,7 @@ private:
 	/* Let the computer pick a random number */
 	random_device rd;    // non-deterministic engine 
 	mt19937 gen{ rd() }; // deterministic engine. For most common uses, std::mersenne_twister_engine, fast and high-quality.
-	uniform_int_distribution<> spriteRandom{ 0, 9 };
+	uniform_int_distribution<> spriteRandom{ 0, 8 };
 
 	// Sprites for displaying background and rocket textures
 	cSprite spriteBkgd;
@@ -54,7 +54,7 @@ private:
 	vector<LPCSTR> textureName;
 	vector<LPCSTR> textName;
 	vector<LPCSTR> texturesToUse;
-	vector<cEnemy*> thePirates;
+	vector<cEnemy*> theElves;
 	vector<cBullet*> theBullets;
 	vector<cSprite*> theExplosions;
 	// Fonts to use
@@ -88,18 +88,19 @@ private:
 	SDL_Color aColour;
 	cTexture* tempTextTexture;
 	SDL_Point theAreaClicked;
-	cShip theShip;
-	cBottle theBottle;
-	int bottlesCollected;
+	cSanta thePlayer;
+	cPoints theBauble;
+	int pointsCollected;
 	string strScore;
 	cHighScoreTable theHSTable;
 	int numTableItems;
-	cEnemy thePirate;
+	cEnemy theElf;
 	bool gameOver;
 	string theHighScoreTable;
 	int theHSTableSize;
 	double timer;
 	int frames = 1;
+	bool updateScore = false;
 };
 
 #endif
